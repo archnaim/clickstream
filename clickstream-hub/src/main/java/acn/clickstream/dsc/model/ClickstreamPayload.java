@@ -2,8 +2,10 @@ package acn.clickstream.dsc.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "cs.payload")
 public class ClickstreamPayload {
 
     @Id

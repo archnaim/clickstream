@@ -2,8 +2,10 @@ package acn.clickstream.dsc.model;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "cs.faqsummary")
 public class FaqSummary {
 
     @EmbeddedId
