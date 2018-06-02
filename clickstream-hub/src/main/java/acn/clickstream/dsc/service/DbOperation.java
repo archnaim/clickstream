@@ -10,9 +10,11 @@ import acn.clickstream.dsc.util.UtilityService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.exception.DataException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 @Service
@@ -50,12 +52,12 @@ public class DbOperation {
         }
     }
 
-    public Object getAllFaqSummary()
+    public Object getAllFaqSummary(Integer limit)
     {
-        Iterable<FaqSummary> list = new LinkedList<FaqSummary>();
+        Iterable<FaqSummary> list = new ArrayList<>();
 
         try{
-            list = faqSummaryRepo.findAll();
+            list = faqSummaryRepo.findAllByOrderByCounterDesc(new PageRequest(0,limit));
         }
         catch (Exception e)
         {
