@@ -17,6 +17,9 @@ public class KakfaListener {
     @Autowired
     private DbOperation dbOperation;
 
+    @Autowired
+    private RedisOperation redisOperation;
+
     @KafkaListener(topics = "${kafka.topic.clickstream}",groupId = "${kafka.group.consumerClickstream}", containerFactory = "kafkaListenerContainerFactory")
     public void listenClickstreamPayload(String payload)
     {
@@ -27,7 +30,8 @@ public class KakfaListener {
     public void listenFaqCount(@Payload String payload, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String key)
     {
         String[] keys = key.split("\\|\\|");
-        dbOperation.saveOrUpdateFaqSummary(new FaqSummary(keys[0],keys[1], Long.valueOf(payload), LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+//        dbOperation.saveOrUpdateFaqSummary(new FaqSummary(keys[0],keys[1], Long.valueOf(payload), LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        redisOperation.saveOrUpdateFaqSummary(new FaqSummary(keys[0],keys[1], Long.valueOf(payload), LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
     }
 
 }

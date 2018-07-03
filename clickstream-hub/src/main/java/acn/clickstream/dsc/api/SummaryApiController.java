@@ -3,6 +3,7 @@ package acn.clickstream.dsc.api;
 import acn.clickstream.dsc.model.DefaultErrorMessage;
 import acn.clickstream.dsc.model.FaqSummary;
 import acn.clickstream.dsc.service.DbOperation;
+import acn.clickstream.dsc.service.RedisOperation;
 import acn.clickstream.dsc.util.UtilityService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,13 +18,15 @@ public class SummaryApiController {
     @Autowired
     private DbOperation dbOperation;
 
+    @Autowired
+    private RedisOperation redisOperation;
+
     private ObjectMapper mapper = new ObjectMapper();
 
-
     @RequestMapping(value = "/faqsummary",method = RequestMethod.GET)
-    public Object getFaqSummary(@RequestParam(defaultValue = "10",name = "limit") Integer limit)
-    {
-        Object response = dbOperation.getAllFaqSummary(limit);
+    public Object getFaqSummary(@RequestParam(defaultValue = "10",name = "limit") Integer limit) {
+//        Object response = dbOperation.getAllFaqSummary(limit);
+        Object response = redisOperation.getAllFaq();
 
         if(response instanceof DefaultErrorMessage){
             return new ResponseEntity<Object>(response, HttpStatus.valueOf(((DefaultErrorMessage) response).getCode()));

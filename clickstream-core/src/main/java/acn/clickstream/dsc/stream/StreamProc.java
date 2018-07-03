@@ -41,6 +41,7 @@ public class StreamProc {
         //Processing most clicked FAQ
         KTable<String,Long> faqCount= kStream
                 .filterNot((k,v)-> v.getFaqId().equals("not_faq"))
+                .filterNot((k,v)-> v.getFaqId().equals("clickFeedback"))
                 .map((k,v)-> new KeyValue<>(v.getFaqId()+"||"+v.getUserType(),v))
                 .groupByKey(Serialized.with(stringSerde,clickStreamSerde))
                 .count();

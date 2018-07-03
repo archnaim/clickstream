@@ -46,4 +46,13 @@ public class FaqSummary {
     public void setUpdatedAt(Long updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    @Override
+    public String toString() {
+        return "FaqSummary{" +
+                "faqId=" + faqId +
+                ", counter=" + counter +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

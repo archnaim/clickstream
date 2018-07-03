@@ -35,4 +35,12 @@ public class FaqId implements Serializable{
     public void setUserType(String userType) {
         this.userType = userType;
     }
+
+    @Override
+    public String toString() {
+        return "FaqId{" +
+                "faqId='" + faqId + '\'' +
+                ", userType='" + userType + '\'' +
+                '}';
+    }
 }
