@@ -14,13 +14,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.time.Instant;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class DbOperation {
 
-    ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     private ClickstreamRepo clickstreamRepo;
@@ -65,6 +69,23 @@ public class DbOperation {
             return UtilityService.buildHttpErrorMessage(e);
         }
         return list;
+    }
+
+    public void backupFaqCountToDB(Map<List<String>,List<String>> redis)
+    {
+        try {
+            String[] keys = (String[]) redis.keySet().toArray();
+            String[] values = (String[]) redis.values().toArray();
+
+            for (int i = 0; i < keys.length; i++) {
+                String[] key = keys[i].split("||");
+                FaqSummary faqSummary = new FaqSummary(key[0],key[1],Long.valueOf(values[i]),Instant.now().toEpochMilli());
+                saveOrUpdateFaqSummary(faqSummary);
+            }
+        }catch (Exception e)
+        {
+            Log.getLogger().error("Error in saving all faq summary from redis to db, "+e.toString());
+        }
     }
 
 }

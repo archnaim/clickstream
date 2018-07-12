@@ -2,6 +2,7 @@ package acn.clickstream.dsc.service;
 
 import acn.clickstream.dsc.model.FaqSummary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -14,6 +15,9 @@ import java.time.ZoneId;
 @Service
 public class KakfaListener {
 
+    @Value("save.payload.db")
+    private String savePayloadToDB;
+
     @Autowired
     private DbOperation dbOperation;
 
@@ -23,7 +27,7 @@ public class KakfaListener {
     @KafkaListener(topics = "${kafka.topic.clickstream}",groupId = "${kafka.group.consumerClickstream}", containerFactory = "kafkaListenerContainerFactory")
     public void listenClickstreamPayload(String payload)
     {
-        dbOperation.saveOrUpdateClickStream(payload);
+        if(savePayloadToDB.equals("true")) dbOperation.saveOrUpdateClickStream(payload);
     }
 
     @KafkaListener(topics = "${kafka.topic.faqcount}",groupId = "${kafka.group.consumerFaqCount}", containerFactory = "kafkaListenerContainerFactory")
