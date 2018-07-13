@@ -74,12 +74,11 @@ public class DbOperation {
     public void backupFaqCountToDB(Map<List<String>,List<String>> redis)
     {
         try {
-            String[] keys = (String[]) redis.keySet().toArray();
-            String[] values = (String[]) redis.values().toArray();
-
+            Object[] keys = redis.keySet().toArray();
+            Object[] values = redis.values().toArray();
             for (int i = 0; i < keys.length; i++) {
-                String[] key = keys[i].split("||");
-                FaqSummary faqSummary = new FaqSummary(key[0],key[1],Long.valueOf(values[i]),Instant.now().toEpochMilli());
+                String[] key = String.valueOf(keys[i]).split("\\|\\|");
+                FaqSummary faqSummary = new FaqSummary(key[0],key[1],Long.valueOf(String.valueOf(values[i])),Instant.now().toEpochMilli());
                 saveOrUpdateFaqSummary(faqSummary);
             }
         }catch (Exception e)
