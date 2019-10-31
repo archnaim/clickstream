@@ -16,8 +16,11 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfiguration {
 
-    @Value("${acn.kafka.bootstrap.servers}")
+    @Value("${kafka.bootstrap.servers}")
     private String KAFKA_BOOTSTRAP_SERVER;
+
+    @Value("${kafka.producer.ack}")
+    private String KAFKA_PRODUCER_ACK;
 
 
     @Bean
@@ -32,6 +35,10 @@ public class KafkaProducerConfiguration {
         configProps.put(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class);
+        configProps.put(
+                ProducerConfig.ACKS_CONFIG, 
+                KAFKA_PRODUCER_ACK);
+
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
