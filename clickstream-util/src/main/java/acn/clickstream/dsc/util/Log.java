@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+@Deprecated
 public class Log {
 
     private static Logger log;

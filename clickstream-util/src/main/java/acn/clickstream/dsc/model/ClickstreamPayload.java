@@ -1,9 +1,14 @@
 package acn.clickstream.dsc.model;
 
-import java.sql.Timestamp;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClickstreamPayload {
-    private Timestamp timestamp;
+    private long timestamp;
     private String session_id;
     private String user_id;
     private String ip_address;
@@ -12,13 +17,11 @@ public class ClickstreamPayload {
     private String element;
     private String action;
 
-    public ClickstreamPayload(){}
-
-    public Timestamp getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -78,18 +81,4 @@ public class ClickstreamPayload {
         this.action = action;
     }
 
-    public ClickstreamPayload(Timestamp timestamp, String session_id, String user_id, String ip_address, String browser,
-            String page, String element, String action) {
-        this.timestamp = timestamp;
-        this.session_id = session_id;
-        this.user_id = user_id;
-        this.ip_address = ip_address;
-        this.browser = browser;
-        this.page = page;
-        this.element = element;
-        this.action = action;
-    }
-
-    
-    
 }

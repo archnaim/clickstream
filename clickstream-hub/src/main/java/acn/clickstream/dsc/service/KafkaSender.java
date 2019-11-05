@@ -1,10 +1,10 @@
 package acn.clickstream.dsc.service;
 
 import acn.clickstream.dsc.model.ClickstreamPayload;
-import acn.clickstream.dsc.util.Log;
 import acn.clickstream.dsc.util.UtilityService;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -18,18 +18,20 @@ public class KafkaSender {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    private Logger logger = LoggerFactory.getLogger(KafkaSender.class);
+
     @Value("${kafka.topic.clickstream}")
     private String CLICKSTREAM_TOPIC;
 
     public Object send(String message) {
-        Log.getLogger().info("Send message to topic, "+message);
+        logger.debug("Send message to topic, " + message);
         try {
             objectMapper.readValue(message,ClickstreamPayload.class);
             kafkaTemplate.send(CLICKSTREAM_TOPIC,message);
         }
         catch (Exception e)
         {
-            Log.getLogger().error("Error in sending click stream payload to kafka topic, "+e.toString());
+            logger.error("Error in sending click stream payload to kafka topic, " + e.toString());
             return UtilityService.buildHttpErrorMessage(e);
         }
         return HttpStatus.ACCEPTED;
