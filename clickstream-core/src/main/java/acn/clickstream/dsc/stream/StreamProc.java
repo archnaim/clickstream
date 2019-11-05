@@ -2,6 +2,7 @@ package acn.clickstream.dsc.stream;
 
 import acn.clickstream.dsc.constant.KafkaStreamingSinkTopic;
 import acn.clickstream.dsc.model.ClickstreamPayload;
+import acn.clickstream.dsc.singleton.Singleton;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.Serde;
@@ -35,7 +36,7 @@ public class StreamProc {
     @Bean("userCountTopology")
     public KStream<String, String> streamingUserCountPerHour(
             @Qualifier("userCountBuilder") StreamsBuilder kStreamBuilder) {
-        logger.info("Starting Streaming Process");
+        logger.info("Starting userCount Streaming Process");
         final KStream<String, String> kStream =
                 kStreamBuilder.stream(CLICKSTREAM_TOPIC, Consumed
                         .with(stringSerde, stringSerde));
@@ -65,7 +66,37 @@ public class StreamProc {
     }
 
 
+    @Bean("bounceTopology")
+    public KStream<String, String> streamingBouncePerHour(
+            @Qualifier("visitCountBuilder") StreamsBuilder kStreamBuilder) {
+        logger.info("Starting Bounce Streaming Process");
+
+        final KStream<String, String> kStream =
+                kStreamBuilder.stream(CLICKSTREAM_TOPIC, Consumed
+                        .with(stringSerde, stringSerde));
+
+        KGroupedStream<String, String> sessionIpGroupedStream = kStream.map((key, value) -> {
+            ClickstreamPayload clickstreamPayload = null;
+            try {
+                clickstreamPayload = objectMapper.readValue(value, ClickstreamPayload.class);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            return KeyValue.pair(
+                    String.format("%s_%s", clickstreamPayload != null ? clickstreamPayload.getSession_id() : "null"
+                            , clickstreamPayload != null ? clickstreamPayload.getIp_address() : "null")
+                    , value);
+        }).groupByKey();
+
+        KTable<Windowed<String>, Long> visitPerHourTable = sessionIpGroupedStream
+                .windowedBy(TimeWindows.of(Duration.ofMinutes(60)))
+                .count(Materialized.as(KafkaStreamingSinkTopic.SESSION_VISIT_PER_HOUR));
 
 
+        Singleton.getInstance().BOUNCE_VISIT_PER_HOUR = visitPerHourTable
+                .filter((k, v) -> v == 1)
+                .queryableStoreName();
 
+        return kStream;
+    }
 }

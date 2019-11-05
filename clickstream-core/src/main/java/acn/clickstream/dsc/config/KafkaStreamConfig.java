@@ -33,9 +33,14 @@ public class KafkaStreamConfig {
         return new KafkaStreamsConfiguration(props);
     }
 
-    @Bean("userCountBuilder")
+    @Bean
     public StreamsBuilderFactoryBean userCountBuilder(KafkaStreamsConfiguration streamsConfig)
     {
+        return new StreamsBuilderFactoryBean(streamsConfig);
+    }
+
+    @Bean
+    public StreamsBuilderFactoryBean visitCountBuilder(KafkaStreamsConfiguration streamsConfig) {
         return new StreamsBuilderFactoryBean(streamsConfig);
     }
 }

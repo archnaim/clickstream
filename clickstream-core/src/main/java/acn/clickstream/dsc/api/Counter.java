@@ -1,6 +1,8 @@
 package acn.clickstream.dsc.api;
 
+import acn.clickstream.dsc.constant.KafkaStreamingSinkTopic;
 import acn.clickstream.dsc.model.ClickstreamPayload;
+import acn.clickstream.dsc.model.TimeUniqueCount;
 import acn.clickstream.dsc.model.TimeUserCount;
 import acn.clickstream.dsc.service.QueryStateStore;
 import org.slf4j.Logger;
@@ -22,10 +24,29 @@ public class Counter {
 
     @PostMapping("/user_per_window_time")
     public Set<TimeUserCount> getTimeUserCounts() {
-        logger.debug("Received request to user_count_per_hour");
+        logger.debug(String.format("Received request to %s", KafkaStreamingSinkTopic.USER_COUNT_PER_HOUR));
         Set<TimeUserCount> timeUserCountSet = queryUserCount.getTimeUserCounts();
-        logger.info(String.format("Completed query for user_count_per_hour, result: %s", timeUserCountSet.toString()));
+        logger.info(String.format("Completed query for %s, result: %s",
+                KafkaStreamingSinkTopic.USER_COUNT_PER_HOUR, timeUserCountSet.toString()));
         return timeUserCountSet;
+    }
+
+    @PostMapping("/visit_per_window_time")
+    public Set<TimeUniqueCount> getTimeVisitCounts() {
+        logger.debug(String.format("Received request to %s", KafkaStreamingSinkTopic.SESSION_VISIT_PER_HOUR));
+        Set<TimeUniqueCount> timeUniqueCount = queryUserCount.getVisitCount();
+        logger.info(String.format("Completed query for %s, result: %s",
+                KafkaStreamingSinkTopic.SESSION_VISIT_PER_HOUR, timeUniqueCount.toString()));
+        return timeUniqueCount;
+    }
+
+    @PostMapping("/bounce_per_window_time")
+    public Set<TimeUniqueCount> getTimeBounceCounts() {
+        logger.debug(String.format("Received request to %s", KafkaStreamingSinkTopic.BOUNCE_VISIT_PER_HOUR));
+        Set<TimeUniqueCount> timeUniqueCount = queryUserCount.getBounceCount();
+        logger.info(String.format("Completed query for %s, result: %s",
+                KafkaStreamingSinkTopic.BOUNCE_VISIT_PER_HOUR, timeUniqueCount.toString()));
+        return timeUniqueCount;
     }
 
     @PostMapping("/coba")
