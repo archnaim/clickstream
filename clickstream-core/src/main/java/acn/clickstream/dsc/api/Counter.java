@@ -8,6 +8,7 @@ import acn.clickstream.dsc.service.QueryStateStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +23,7 @@ public class Counter {
 
     private Logger logger = LoggerFactory.getLogger(Counter.class);
 
-    @PostMapping("/user_per_window_time")
+    @GetMapping("/user_per_window_time")
     public Set<TimeUserCount> getTimeUserCounts() {
         logger.debug(String.format("Received request to %s", KafkaStreamingSinkTopic.USER_COUNT_PER_HOUR));
         Set<TimeUserCount> timeUserCountSet = queryUserCount.getTimeUserCounts();
@@ -31,7 +32,7 @@ public class Counter {
         return timeUserCountSet;
     }
 
-    @PostMapping("/visit_per_window_time")
+    @GetMapping("/visit_per_window_time")
     public Set<TimeUniqueCount> getTimeVisitCounts() {
         logger.debug(String.format("Received request to %s", KafkaStreamingSinkTopic.SESSION_VISIT_PER_HOUR));
         Set<TimeUniqueCount> timeUniqueCount = queryUserCount.getVisitCount();
@@ -40,7 +41,7 @@ public class Counter {
         return timeUniqueCount;
     }
 
-    @PostMapping("/bounce_per_window_time")
+    @GetMapping("/bounce_per_window_time")
     public Set<TimeUniqueCount> getTimeBounceCounts() {
         logger.debug(String.format("Received request to %s", KafkaStreamingSinkTopic.BOUNCE_VISIT_PER_HOUR));
         Set<TimeUniqueCount> timeUniqueCount = queryUserCount.getBounceCount();
